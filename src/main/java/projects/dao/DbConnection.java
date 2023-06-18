@@ -20,9 +20,10 @@ public class DbConnection {
 		System.out.println("Connecting to "+uri);
 		try {
 			Connection dbConn = DriverManager.getConnection(uri);
-			System.out.println(">> Connection successful!");
+			System.out.println(">> Connection successful :)");
 			return dbConn;
 		} catch (SQLException e) {
+			System.out.println(">>  Connection Failed! :(");
 			throw new DbException(e);
 		}
 	}
