@@ -8,11 +8,15 @@ import projects.service.ProjectService;
 import projects.entity.Project;
 
 public class ProjectsApp {
+	
 	//@formatter:off
 	private List<String> operations = List.of(
-			"1) Add a Project"
+			"1) Add a Project",
+			"2) List Projects",
+			"3) Select a Project"
 			);
 	//@formatter:on
+	private Project curProject = new Project();
 	private Scanner scanner = new Scanner(System.in);
 	private ProjectService projectService = new ProjectService();
 	
@@ -20,7 +24,6 @@ public class ProjectsApp {
 		new ProjectsApp().processUserSelections();
 	}
 	private void processUserSelections() {
-		System.out.println(operations.get(0));
 		boolean done = false;
 		while (!done)	{
 			try	{
@@ -31,6 +34,13 @@ public class ProjectsApp {
 					break;
 				case 1:
 					createProject();
+					break;
+				case 2:
+					listProjects();
+					break;
+				case 3:
+					selectProject();
+					break;
 				default:
 					System.out.println("\n" + selection + " is not a valid selection. Try again.");
 				}
@@ -39,6 +49,18 @@ public class ProjectsApp {
 				System.out.println("\nError: " + e + " Try again.");
 			}
 		}
+	}
+	private void selectProject() {
+		listProjects();
+		Integer projectId = getIntInput("Enter a Project ID to select a Project");
+		curProject = null;
+		curProject = projectService.fetchProjectById(projectId);
+		if (curProject==null) {	System.out.println("Invalid Project ID Selected");	}
+	}
+	private void listProjects() {
+		List<Project> projectList = projectService.fetchAllProjects();
+		System.out.println("\nProjects");
+		projectList.forEach(project -> System.out.println("  "+project.getProjectId()+": "+project.getProjectName()));
 	}
 	private void createProject() {
 		String projectName = getStringInput("Enter the Project name");
@@ -77,8 +99,9 @@ public class ProjectsApp {
 	}
 	private void printOperations() {
 		System.out.println("\nThese are the available selections.  Press the Enter key to quit:");
-		System.out.println(operations.get(0));
 		operations.forEach(line -> System.out.println("  "+line));
+		if (curProject==null)	{	System.out.println("\nYou are not working with a Project.");	}	
+		else					{	System.out.println("\nYou are working with project: " + curProject);	}
 	}
 	private Integer getIntInput(String prompt)	{
 		String input = getStringInput(prompt);
